@@ -391,6 +391,8 @@ static const CGFloat MBDefaultDetailsLabelFontSize = 12.f;
             // Update to indeterminate indicator
             [indicator removeFromSuperview];
             indicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+            CGFloat scale = 26.0f / 35.0f;
+            indicator.transform = CGAffineTransformMakeScale(scale, scale);
             [(UIActivityIndicatorView *)indicator startAnimating];
             [self.bezelView addSubview:indicator];
         }
@@ -537,6 +539,7 @@ static const CGFloat MBDefaultDetailsLabelFontSize = 12.f;
     CGFloat margin = self.margin;
     NSMutableArray *bezelConstraints = [NSMutableArray array];
     NSDictionary *metrics = @{@"margin": @(margin)};
+    NSDictionary *horizontalMetrics = @{@"margin": @(38.0)};
 
     NSMutableArray *subviews = [NSMutableArray arrayWithObjects:self.topSpacer, self.label, self.detailsLabel, self.button, self.bottomSpacer, nil];
     if (self.indicator) [subviews insertObject:self.indicator atIndex:1];
@@ -594,7 +597,10 @@ static const CGFloat MBDefaultDetailsLabelFontSize = 12.f;
         // Center in bezel
         [bezelConstraints addObject:[NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:bezel attribute:NSLayoutAttributeCenterX multiplier:1.f constant:0.f]];
         // Ensure the minimum edge margin is kept
-        [bezelConstraints addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(>=margin)-[view]-(>=margin)-|" options:0 metrics:metrics views:NSDictionaryOfVariableBindings(view)]];
+        
+        NSDictionary* tmpMetrics = (self.customView) ? metrics : horizontalMetrics;
+        [bezelConstraints addObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(>=margin)-[view]-(>=margin)-|" options:0 metrics:tmpMetrics views:NSDictionaryOfVariableBindings(view)]];
+
         // Element spacing
         if (idx == 0) {
             // First, ensure spacing to bezel edge
